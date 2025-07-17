@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="particles-js"></div>
@@ -15,32 +15,23 @@
     <div class="info-box">
         <div id="main-content" class="content-wrapper">
             <h1>Информация о Рэйваре</h1>
-            <p>Здравствуйте, я обычный человек с псевдонимом Рэйвар
-Имя: Еблан
-Псевдоним: Рэйвар
-Возраст: 1488
-
-Люблю писать ботов, программы
-Какие языки программирования я знаю:
-Python, JavaScript, Java, C++, C#, Assembler, C, Go
-На этом все! :3
-#krd ❤️</p>
-            <div class="btn-container">
-                <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn">Телеграмм</a>
-                <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn">Совместный канал</a>
-                <button id="to-donate-btn" class="btn btn-special">Донат</button>
+            <p id="main-p" class="typing-text"></p>
+            <div id="main-btns" class="btn-container">
+                <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn animated-btn">Телеграмм</a>
+                <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn animated-btn">Совместный канал</a>
+                <button id="to-donate-btn" class="btn btn-special animated-btn">Донат</button>
             </div>
         </div>
         
         <div id="donate-content" class="content-wrapper" style="display: none;">
-             <p>хэй! если ты хочешь поддержать меня (например помочь в создании телеграмм-ботов) то можешь кинуть денюжек на карту? :3</p>
+             <p id="donate-p" class="typing-text"></p>
             <div class="card-number-container">
-                <span class="card-label">CARD_NUMBER:</span>
+                <span class="card-label">> CARD_</span>
                 <code id="cardNumber">2200 7013 3309 6383</code>
                 <button id="copyButton" class="copy-btn" title="Копировать"></button>
             </div>
-            <div class="btn-container">
-                <button id="to-main-btn" class="btn">Назад</button>
+            <div id="donate-btns" class="btn-container">
+                <button id="to-main-btn" class="btn animated-btn">Назад</button>
             </div>
         </div>
     </div>
