@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const toDonateBtn = document.getElementById('to-donate-btn');
     const toMainBtn = document.getElementById('to-main-btn');
 
-    const mainText = `Здравствуйте, я обычный человек с псевдонимом Рэйвар
+    const mainText = `Здравствуйте, я обычный человек с псевдонимом
+Рэйвар
 Имя: Еблан
 Псевдоним: Рэйвар
 Возраст: 1488
@@ -26,7 +27,6 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         handle.addEventListener('mousedown', dragStart);
         handle.addEventListener('touchstart', dragStart, { passive: false });
     });
-
     document.addEventListener('mouseup', dragEnd);
     document.addEventListener('touchend', dragEnd);
     document.addEventListener('mousemove', drag);
@@ -36,6 +36,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         isDragging = true;
         parallaxEnabled = false;
         document.body.classList.add('dragging');
+        infoBox.style.transition = 'none';
         initialX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - xOffset;
         initialY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY) - yOffset;
     }
@@ -44,17 +45,19 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         if (!isDragging) return;
         isDragging = false;
         parallaxEnabled = true;
+        infoBox.style.transition = 'transform 0.05s linear';
         document.body.classList.remove('dragging');
     }
     
     function drag(e) {
-        if (!isDragging) return;
-        e.preventDefault();
-        const currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
-        const currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
-        xOffset = currentX;
-        yOffset = currentY;
-        dragContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+        if (isDragging) {
+            e.preventDefault();
+            const currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
+            const currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
+            xOffset = currentX;
+            yOffset = currentY;
+            dragContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+        }
     }
 
     function apply3DEffect(e) {
@@ -72,12 +75,10 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     function applyMagneticEffect(e, el) {
         if (!parallaxEnabled) return;
         const rect = el.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const deltaX = e.clientX - centerX;
-        const deltaY = e.clientY - centerY;
+        const deltaX = e.clientX - (rect.left + rect.width / 2);
+        const deltaY = e.clientY - (rect.top + rect.height / 2);
         const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-        el.style.transform = distance < 100 ? `translateZ(40px) translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)` : 'translateZ(40px)';
+        el.style.transform = distance < 100 ? `translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)` : '';
     }
 
     document.body.onmousemove = (e) => {
@@ -93,10 +94,9 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         const chars = '█▓▒░01';
         const segments = textContainer.querySelectorAll('span.char, br, span.cursor');
         let completed = 0;
-        let charSegments = Array.from(segments).filter(s => s.tagName !== 'BR' && !s.classList.contains('cursor'));
+        let charSegments = Array.from(segments).filter(s => s.tagName === 'SPAN' && !s.classList.contains('cursor'));
         if (charSegments.length === 0) { if (onComplete) onComplete(); return; }
         charSegments.forEach((span, i) => {
-            const originalChar = span.textContent;
             let randomCharCount = 0;
             const animate = () => {
                 if (randomCharCount < 10) {
@@ -105,7 +105,6 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
                     randomCharCount++;
                     setTimeout(animate, 20);
                 } else {
-                    span.textContent = originalChar;
                     span.style.opacity = '0';
                     if (++completed >= charSegments.length && onComplete) onComplete();
                 }
@@ -132,29 +131,33 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     }
     
     function switchPage(pageOut, pageIn, textIn) {
+        pageOut.querySelector('.btn-container').classList.remove('visible');
+        parallaxEnabled = false;
         infoBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
         const textContainerOut = pageOut.querySelector('.typing-text-container');
         dataMoshing(textContainerOut, () => {
-            pageOut.style.display = 'none';
-            pageOut.classList.remove('active');
-            pageIn.style.display = 'flex';
-            pageIn.classList.add('active');
-            const textContainerIn = pageIn.querySelector('.typing-text-container');
-            typewriter(textContainerIn, textIn);
+             pageOut.style.display = 'none';
+             pageOut.classList.remove('active');
+             pageIn.style.display = 'flex';
+             pageIn.classList.add('active');
+             parallaxEnabled = true;
+             typewriter(pageIn.querySelector('.typing-text-container'), textIn, () => {
+                 pageIn.querySelector('.btn-container').classList.add('visible');
+             });
         });
     }
 
     window.addEventListener('load', () => {
         document.body.classList.add('loaded');
         mainContent.classList.add('active');
-        typewriter(document.getElementById('main-p'), mainText);
+        typewriter(document.getElementById('main-p'), mainText, () => {
+            document.getElementById('main-btns').classList.add('visible');
+        });
     });
     
     document.body.onmouseleave = () => {
-        if(parallaxEnabled) {
-            infoBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
-            magneticButtons.forEach(btn => btn.style.transform = 'translateZ(40px)');
-        }
+        if(parallaxEnabled) infoBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
+        magneticButtons.forEach(btn => btn.style.transform = '');
     };
     
     document.addEventListener('mousedown', (e) => {
@@ -169,7 +172,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         setTimeout(() => ripple.remove(), 600);
     });
 
-    document.querySelectorAll('.btn, .copy-btn').forEach(button => {
+    document.querySelectorAll('.btn').forEach(button => {
         button.addEventListener('mousedown', function (e) {
             const rect = this.getBoundingClientRect();
             const ripple = document.createElement('span');
