@@ -14,8 +14,8 @@
 
     <div class="info-box">
         <div id="main-content" class="content-wrapper">
-            <h1>Информация о Рэйваре</h1>
-            <p id="main-p" class="typing-text"></p>
+            <h1 class="glow-text">Информация о Рэйваре</h1>
+            <p id="main-p" class="typing-text-container"></p>
             <div id="main-btns" class="btn-container">
                 <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn animated-btn">Телеграмм</a>
                 <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn animated-btn">Совместный канал</a>
@@ -24,12 +24,19 @@
         </div>
         
         <div id="donate-content" class="content-wrapper" style="display: none;">
-             <p id="donate-p" class="typing-text"></p>
-            <div class="card-number-container">
-                <span class="card-label">> CARD_</span>
-                <code id="cardNumber">2200 7013 3309 6383</code>
-                <button id="copyButton" class="copy-btn" title="Копировать"></button>
-            </div>
+             <div class="terminal-window">
+                <div class="terminal-header">
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="terminal-body">
+                    <p id="donate-p" class="typing-text-container"></p>
+                    <div class="card-number-container">
+                        <span class="card-label">> CARD_NUMBER</span>
+                        <code id="cardNumber">2200 7013 3309 6383</code>
+                        <button id="copyButton" class="copy-btn" title="Копировать"></button>
+                    </div>
+                </div>
+             </div>
             <div id="donate-btns" class="btn-container">
                 <button id="to-main-btn" class="btn animated-btn">Назад</button>
             </div>
