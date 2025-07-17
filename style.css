@@ -99,12 +99,10 @@ body.dragging .drag-handle {
     line-height: 1.7;
     white-space: pre-wrap;
     transform: translateZ(30px);
-    min-height: 260px;
 }
-#donate-content .typing-text-container {
-    min-height: 70px;
-    margin-bottom: 20px;
-}
+#main-content .typing-text-container { min-height: 275px; }
+#donate-content .typing-text-container { min-height: 70px; margin-bottom: 20px;}
+
 .typing-text-container span.char {
     opacity: 0;
 }
