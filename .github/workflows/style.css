@@ -1,0 +1,99 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.info-box {
+    background-color: #1e1e1e;
+    padding: 30px 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #333;
+}
+
+h1 {
+    color: #ffffff;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+p {
+    white-space: pre-wrap;
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #333333;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #444444;
+    transform: translateY(-2px);
+}
+
+.btn-special {
+    background-color: #5865f2;
+}
+
+.btn-special:hover {
+    background-color: #4752c4;
+}
+
+.card-number-container {
+    background-color: #0c0c0c;
+    border: 1px dashed #444;
+    padding: 15px 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.card-number-container code {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.2em;
+    color: #7289da;
+}
+
+.copy-btn {
+    background: #5865f2;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+    background-color: #4752c4;
+}
