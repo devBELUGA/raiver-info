@@ -1,3 +1,8 @@
+:root {
+    --transition-speed: 0.5s;
+    --timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
 body {
     background-color: #0d1117;
     color: #c9d1d9;
@@ -29,10 +34,25 @@ body {
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
     max-width: 650px;
     width: 100%;
-    text-align: center;
     border: 1px solid #30363d;
     z-index: 1;
     position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--transition-speed) var(--timing-function), transform var(--transition-speed) var(--timing-function);
+    overflow: hidden;
+}
+
+body.loaded .info-box {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.content-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1 {
@@ -47,7 +67,7 @@ p {
     font-size: 1.1em;
     line-height: 1.7;
     margin-bottom: 30px;
-    text-align: left;
+    text-align: center;
 }
 
 .btn-container {
@@ -58,13 +78,19 @@ p {
 }
 
 .btn {
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
     text-decoration: none;
     color: #c9d1d9;
     background-color: #21262d;
     border: 1px solid #30363d;
     padding: 12px 28px;
     border-radius: 6px;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
+    font-size: 1em;
     transition: all 0.2s ease-in-out;
 }
 
@@ -93,9 +119,10 @@ p {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    width: 90%;
 }
 
-.card-number-container code {
+code#cardNumber {
     font-family: 'Fira Code', monospace;
     font-size: 1.3em;
     color: #a5d6ff;
@@ -108,23 +135,39 @@ p {
 }
 
 .copy-btn {
-    width: 24px;
-    height: 24px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
+    width: 24px; height: 24px; background-color: transparent; border: none; cursor: pointer;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b949e'%3E%3Cpath d='M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    transition: transform 0.2s, filter 0.2s;
+    background-size: contain; background-repeat: no-repeat; background-position: center; transition: transform 0.2s, filter 0.2s;
+}
+.copy-btn:hover { transform: scale(1.1); filter: brightness(1.5); }
+.copy-btn.copied { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232ea043'%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3E%3C/svg%3E"); }
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-effect 0.6s linear;
+    pointer-events: none;
 }
 
-.copy-btn:hover {
-    transform: scale(1.1);
-    filter: brightness(1.5);
+@keyframes ripple-effect {
+    to { transform: scale(4); opacity: 0; }
 }
 
-.copy-btn.copied {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232ea043'%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3E%3C/svg%3E");
+.content-out {
+    animation: fade-out 0.4s forwards ease-in;
+}
+.content-in {
+    animation: fade-in 0.4s 0.2s forwards ease-out;
+}
+
+@keyframes fade-out {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
