@@ -78,7 +78,9 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         const deltaX = e.clientX - (rect.left + rect.width / 2);
         const deltaY = e.clientY - (rect.top + rect.height / 2);
         const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-        el.style.transform = distance < 100 ? `translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)` : '';
+        const magneticTransform = distance < 100 ? `translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)` : '';
+        const hoverTransform = el.matches(':hover') ? 'translateY(-2px)' : '';
+        el.style.transform = magneticTransform || hoverTransform;
     }
 
     document.body.onmousemove = (e) => {
@@ -86,7 +88,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
             document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
             document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
             apply3DEffect(e);
-            magneticButtons.forEach(btn => applyMagneticEffect(e, btn));
+            document.querySelectorAll('.btn.magnetic').forEach(btn => applyMagneticEffect(e, btn));
         });
     };
 
