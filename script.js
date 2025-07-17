@@ -93,9 +93,13 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     function typewriter(textContainer, text, onComplete) {
         let textWithSpans = '';
         for (const char of text) {
-            textWithSpans += `<span class="char">${char}</span>`;
+            if (char === '\n') {
+                textWithSpans += '<br>';
+            } else {
+                textWithSpans += `<span class="char">${char}</span>`;
+            }
         }
-        textContainer.innerHTML = textWithSpans + '<span class="cursor">▋</span>';
+        textContainer.innerHTML = textWithSpans + '<span class="cursor"> |</span>';
         const chars = textContainer.querySelectorAll('.char');
         let i = 0;
 
@@ -129,7 +133,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         document.body.classList.add('loaded');
         mainContent.classList.add('active');
         const textContainer = document.getElementById('main-p');
-        typewriter(textContainer, text);
+        typewriter(textContainer, mainText);
         currentRAF = true;
         animate();
     });
@@ -139,4 +143,18 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     };
     toDonateBtn.onclick = () => switchPage(mainContent, donateContent, donateText);
     toMainBtn.onclick = () => switchPage(donateContent, mainContent, mainText);
+
+    const copyButton = document.getElementById('copyButton');
+    const cardNumberText = document.getElementById('cardNumber')?.innerText;
+    if (copyButton && cardNumberText) {
+        copyButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(cardNumberText.replace(/\s/g, '')).then(() => {
+                copyButton.classList.add('copied');
+                setTimeout(() => {
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    }
 });
