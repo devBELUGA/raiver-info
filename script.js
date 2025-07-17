@@ -37,8 +37,9 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         parallaxEnabled = false;
         document.body.classList.add('dragging');
         infoBox.style.transition = 'none';
-        initialX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - xOffset;
-        initialY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY) - yOffset;
+        const rect = dragContainer.getBoundingClientRect();
+        initialX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - rect.left;
+        initialY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY) - rect.top;
     }
     
     function dragEnd() {
@@ -54,8 +55,6 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
             e.preventDefault();
             const currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
             const currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
-            xOffset = currentX;
-            yOffset = currentY;
             dragContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
         }
     }
@@ -67,8 +66,8 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         const centerY = rect.top + rect.height / 2;
         const mouseX = e.clientX - centerX;
         const mouseY = e.clientY - centerY;
-        const rotateX = (mouseY / (rect.height / 2)) * -5;
-        const rotateY = (mouseX / (rect.width / 2)) * 5;
+        const rotateX = (mouseY / (window.innerHeight / 2)) * -8;
+        const rotateY = (mouseX / (window.innerWidth / 2)) * 8;
         infoBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     }
 
@@ -78,9 +77,11 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         const deltaX = e.clientX - (rect.left + rect.width / 2);
         const deltaY = e.clientY - (rect.top + rect.height / 2);
         const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-        const magneticTransform = distance < 100 ? `translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)` : '';
-        const hoverTransform = el.matches(':hover') ? 'translateY(-2px)' : '';
-        el.style.transform = magneticTransform || hoverTransform;
+        if (distance < 100) {
+            el.style.transform = `translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)`;
+        } else {
+            el.style.transform = el.matches(':hover') ? 'translateY(-3px)' : '';
+        }
     }
 
     document.body.onmousemove = (e) => {
@@ -88,7 +89,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
             document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
             document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
             apply3DEffect(e);
-            document.querySelectorAll('.btn.magnetic').forEach(btn => applyMagneticEffect(e, btn));
+            magneticButtons.forEach(btn => applyMagneticEffect(e, btn));
         });
     };
 
@@ -138,9 +139,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         infoBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
         const textContainerOut = pageOut.querySelector('.typing-text-container');
         dataMoshing(textContainerOut, () => {
-             pageOut.style.display = 'none';
              pageOut.classList.remove('active');
-             pageIn.style.display = 'flex';
              pageIn.classList.add('active');
              parallaxEnabled = true;
              typewriter(pageIn.querySelector('.typing-text-container'), textIn, () => {
@@ -176,6 +175,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
 
     document.querySelectorAll('.btn').forEach(button => {
         button.addEventListener('mousedown', function (e) {
+            e.stopPropagation();
             const rect = this.getBoundingClientRect();
             const ripple = document.createElement('span');
             ripple.classList.add('ripple');
@@ -194,6 +194,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     document.getElementById('copyButton').addEventListener('click', (e) => {
         e.stopPropagation();
         const cardNumber = document.getElementById('cardNumber')?.innerText;
+        if (!cardNumber) return;
         navigator.clipboard.writeText(cardNumber.replace(/\s/g, '')).then(() => {
             e.target.classList.add('copied');
             setTimeout(() => e.target.classList.remove('copied'), 2000);
