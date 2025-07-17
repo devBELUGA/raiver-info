@@ -35,6 +35,8 @@ body {
 }
 .perspective-container {
     perspective: 1000px;
+    position: absolute;
+    transition: transform 0.05s linear;
 }
 .info-box {
     background: var(--box-bg);
@@ -51,7 +53,7 @@ body {
     opacity: 0;
     transform: scale(0.95);
 }
-body.loaded .info-box {
+body.loaded .perspective-container {
     opacity: 1;
     transform: scale(1);
 }
@@ -68,6 +70,13 @@ h1.glow-text {
     text-shadow: 0 0 10px var(--glow-color);
     transform: translateZ(50px);
     margin: 0 0 25px 0;
+}
+.drag-handle {
+    cursor: grab;
+    user-select: none;
+}
+body.dragging .drag-handle {
+    cursor: grabbing;
 }
 .typing-text-container {
     min-height: 255px;
@@ -192,6 +201,7 @@ code#cardNumber {
 .copy-btn.copied {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232ea043'%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3E%3C/svg%3E");
 }
+.info-box,
 .btn,
 .typing-text-container,
 h1 {
