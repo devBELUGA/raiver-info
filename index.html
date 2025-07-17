@@ -10,41 +10,37 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="aurora-background"></div>
-    <div id="particles-js"></div>
+    <div class="grid-background"></div>
 
-    <div class="info-box">
-        <div id="main-content" class="content-wrapper">
-            <h1 class="glow-text">Информация о Рэйваре</h1>
-            <p id="main-p" class="typing-text-container"></p>
-            <div id="main-btns" class="btn-container">
-                <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn animated-btn">Телеграмм</a>
-                <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn animated-btn">Совместный канал</a>
-                <button id="to-donate-btn" class="btn btn-special animated-btn">Донат</button>
+    <div class="perspective-container">
+        <div class="info-box">
+            <div id="main-content" class="content-wrapper">
+                <h1 class="glow-text">Информация о Рэйваре</h1>
+                <p id="main-p" class="typing-text-container"></p>
+                <div id="main-btns" class="btn-container">
+                    <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn magnetic">Телеграмм</a>
+                    <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn magnetic">Совместный канал</a>
+                    <button id="to-donate-btn" class="btn btn-special magnetic">Донат</button>
+                </div>
             </div>
-        </div>
-        
-        <div id="donate-content" class="content-wrapper" style="display: none;">
-             <div class="terminal-window">
-                <div class="terminal-header">
-                    <span></span><span></span><span></span>
-                </div>
-                <div class="terminal-body">
-                    <p id="donate-p" class="typing-text-container"></p>
-                    <div class="card-number-container">
-                        <span class="card-label">> CARD_NUMBER</span>
-                        <code id="cardNumber">2200 7013 3309 6383</code>
-                        <button id="copyButton" class="copy-btn" title="Копировать"></button>
+            <div id="donate-content" class="content-wrapper" style="display: none;">
+                 <div class="terminal-window">
+                    <div class="terminal-header"><span></span><span></span><span></span></div>
+                    <div class="terminal-body">
+                        <p id="donate-p" class="typing-text-container"></p>
+                        <div class="card-number-container">
+                            <span class="card-label">> CARD_NUMBER</span>
+                            <code id="cardNumber">2200 7013 3309 6383</code>
+                            <button id="copyButton" class="copy-btn" title="Копировать"></button>
+                        </div>
                     </div>
+                 </div>
+                <div id="donate-btns" class="btn-container">
+                    <button id="to-main-btn" class="btn magnetic">Назад</button>
                 </div>
-             </div>
-            <div id="donate-btns" class="btn-container">
-                <button id="to-main-btn" class="btn animated-btn">Назад</button>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
