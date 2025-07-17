@@ -1,55 +1,136 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    window.addEventListener('load', () => {
-        document.body.classList.add('loaded');
-    });
-
-    particlesJS("particles-js", {
-        particles: { number: { value: 60, density: { enable: true, value_area: 800 }},
-            color: { value: "#ffffff" }, shape: { type: "circle" },
-            opacity: { value: 0.5, random: true }, size: { value: 3, random: true },
-            line_linked: { enable: false },
-            move: { enable: true, speed: 2, direction: "bottom-right", random: true, straight: true, out_mode: "out" }
-        },
-        interactivity: { detect_on: "canvas", events: { onhover: { enable: false }, onclick: { enable: false }, resize: true }},
-        retina_detect: true
-    });
-
+    const particlesContainer = document.getElementById('particles-js');
     const mainContent = document.getElementById('main-content');
     const donateContent = document.getElementById('donate-content');
     const toDonateBtn = document.getElementById('to-donate-btn');
     const toMainBtn = document.getElementById('to-main-btn');
 
-    function switchContent(outgoing, incoming) {
-        outgoing.classList.add('content-out');
-        
-        outgoing.addEventListener('animationend', () => {
-            outgoing.style.display = 'none';
-            outgoing.classList.remove('content-out');
-            
-            incoming.style.display = 'flex';
-            incoming.classList.add('content-in');
-        }, { once: true });
+    const mainText = `Здравствуйте, я обычный человек с псевдонимом Рэйвар
+Имя: Еблан
+Псевдоним: Рэйвар
+Возраст: 1488
+
+Люблю писать ботов, программы
+Какие языки программирования я знаю:
+Python, JavaScript, Java, C++, C#, Assembler, C, Go
+На этом все! :3
+#krd ❤️`;
+
+    const donateText = `хэй! если ты хочешь поддержать меня (например помочь в создании телеграмм-ботов) то можешь кинуть денюжек на карту? :3`;
+
+    function typewriter(element, text, callback) {
+        element.innerHTML = '';
+        element.classList.remove('finished');
+        let i = 0;
+        const speed = 20;
+
+        function type() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            } else {
+                element.classList.add('finished');
+                if (callback) callback();
+            }
+        }
+        type();
     }
 
-    if(toDonateBtn) toDonateBtn.addEventListener('click', () => switchContent(mainContent, donateContent));
-    if(toMainBtn) toMainBtn.addEventListener('click', () => switchContent(donateContent, mainContent));
-    
+    function showPage(pageElement, textElement, text, buttonsContainer) {
+        pageElement.style.display = 'flex';
+        pageElement.classList.remove('content-out');
+        pageElement.classList.add('content-in');
+
+        buttonsContainer.classList.remove('visible');
+        typewriter(textElement, text, () => {
+            buttonsContainer.classList.add('visible');
+        });
+    }
+
+    function switchPage(pageOut, pageIn, textElementIn, textIn, buttonsIn) {
+        pageOut.classList.add('content-out');
+
+        setTimeout(() => {
+            pageOut.style.display = 'none';
+            pageOut.classList.remove('content-out');
+
+            showPage(pageIn, textElementIn, textIn, buttonsIn);
+
+        }, 400);
+    }
+
+    particlesJS("particles-js", {
+        particles: {
+            number: {
+                value: 60,
+                density: {
+                    enable: true,
+                    value_area: 800
+                }
+            },
+            color: {
+                value: "#ffffff"
+            },
+            shape: {
+                type: "circle"
+            },
+            opacity: {
+                value: 0.5,
+                random: true
+            },
+            size: {
+                value: 3,
+                random: true
+            },
+            line_linked: {
+                enable: false
+            },
+            move: {
+                enable: true,
+                speed: 2,
+                direction: "bottom-right",
+                random: true,
+                straight: true,
+                out_mode: "out"
+            }
+        },
+        interactivity: {
+            detect_on: "canvas",
+            events: {
+                onhover: {
+                    enable: false
+                },
+                onclick: {
+                    enable: false
+                },
+                resize: true
+            }
+        },
+        retina_detect: true
+    });
+
+    window.addEventListener('load', () => {
+        document.body.classList.add('loaded');
+        showPage(mainContent, document.getElementById('main-p'), mainText, document.getElementById('main-btns'));
+    });
+
+    toDonateBtn.addEventListener('click', () => switchPage(mainContent, donateContent, document.getElementById('donate-p'), donateText, document.getElementById('donate-btns')));
+    toMainBtn.addEventListener('click', () => switchPage(donateContent, mainContent, document.getElementById('main-p'), mainText, document.getElementById('main-btns')));
+
     document.querySelectorAll('.btn, .copy-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
+        button.addEventListener('mousedown', function(e) {
             const rect = this.getBoundingClientRect();
             const size = Math.max(this.clientWidth, this.clientHeight);
             const x = e.clientX - rect.left - size / 2;
             const y = e.clientY - rect.top - size / 2;
-
             const ripple = document.createElement('span');
             ripple.classList.add('ripple');
             ripple.style.width = ripple.style.height = `${size}px`;
             ripple.style.left = `${x}px`;
             ripple.style.top = `${y}px`;
-
             this.appendChild(ripple);
-
             setTimeout(() => {
                 ripple.remove();
             }, 600);
@@ -58,16 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const copyButton = document.getElementById('copyButton');
     const cardNumberText = document.getElementById('cardNumber')?.innerText;
-
-    if(copyButton && cardNumberText) {
+    if (copyButton && cardNumberText) {
         copyButton.addEventListener('click', (e) => {
-            e.stopPropagation(); 
+            e.stopPropagation();
             navigator.clipboard.writeText(cardNumberText.replace(/\s/g, '')).then(() => {
                 copyButton.classList.add('copied');
-                copyButton.title = 'Скопировано!';
                 setTimeout(() => {
                     copyButton.classList.remove('copied');
-                    copyButton.title = 'Копировать';
                 }, 2000);
             });
         });
