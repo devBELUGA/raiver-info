@@ -202,7 +202,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
             const rect = this.getBoundingClientRect();
             const ripple = document.createElement('span');
             ripple.classList.add('ripple');
-            this.appendChild(ripple);
+this.appendChild(ripple);
             const size = Math.max(rect.width, rect.height);
             ripple.style.width = ripple.style.height = `${size}px`;
             ripple.style.left = `${e.clientX - rect.left - size/2}px`;
