@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoBox = document.querySelector('.info-box');
     const dragHandles = document.querySelectorAll('.drag-handle');
     const magneticButtons = document.querySelectorAll('.magnetic');
-
     const mainContent = document.getElementById('main-content');
     const donateContent = document.getElementById('donate-content');
     const toDonateBtn = document.getElementById('to-donate-btn');
@@ -21,27 +20,24 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
 #krd ❤️`;
     const donateText = `хэй! если ты хочешь поддержать меня (например помочь в создании телеграмм-ботов) то можешь кинуть денюжек на карту? :3`;
 
-    let isDragging = false;
-    let parallaxEnabled = true;
-    let xOffset = 0, yOffset = 0, initialX, initialY;
-    
+    let isDragging = false, parallaxEnabled = true, xOffset = 0, yOffset = 0, initialX, initialY;
+
     dragHandles.forEach(handle => {
         handle.addEventListener('mousedown', dragStart);
         handle.addEventListener('touchstart', dragStart, { passive: false });
     });
+
+    document.addEventListener('mouseup', dragEnd);
+    document.addEventListener('touchend', dragEnd);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag, { passive: false });
     
     function dragStart(e) {
         isDragging = true;
         parallaxEnabled = false;
         document.body.classList.add('dragging');
-        
-        if (e.type === 'touchstart') {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
-        } else {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-        }
+        initialX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - xOffset;
+        initialY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY) - yOffset;
     }
     
     function dragEnd() {
@@ -54,77 +50,51 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     function drag(e) {
         if (!isDragging) return;
         e.preventDefault();
-
-        let currentX, currentY;
-        if (e.type === "touchmove") {
-            currentX = e.touches[0].clientX - initialX;
-            currentY = e.touches[0].clientY - initialY;
-        } else {
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-        }
-
+        const currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
+        const currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
         xOffset = currentX;
         yOffset = currentY;
-
         dragContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
     }
 
-    document.addEventListener('mouseup', dragEnd);
-    document.addEventListener('touchend', dragEnd);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag, { passive: false });
-
-
     function apply3DEffect(e) {
         if (!parallaxEnabled) return;
-        const {
-            left,
-            top,
-            width,
-            height
-        } = dragContainer.getBoundingClientRect();
-        const centerX = left + width / 2;
-        const centerY = top + height / 2;
+        const rect = dragContainer.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
         const mouseX = e.clientX - centerX;
         const mouseY = e.clientY - centerY;
-        const rotateX = (mouseY / (height / 2)) * -5;
-        const rotateY = (mouseX / (width / 2)) * 5;
+        const rotateX = (mouseY / (rect.height / 2)) * -5;
+        const rotateY = (mouseX / (rect.width / 2)) * 5;
         infoBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     }
 
     function applyMagneticEffect(e, el) {
         if (!parallaxEnabled) return;
-        const { left, top, width, height } = el.getBoundingClientRect();
-        const centerX = left + width / 2;
-        const centerY = top + height / 2;
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
         const deltaX = e.clientX - centerX;
         const deltaY = e.clientY - centerY;
         const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-        if (distance < 100) {
-            el.style.transform = `translateZ(40px) translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)`;
-        } else {
-            el.style.transform = 'translateZ(40px)';
-        }
+        el.style.transform = distance < 100 ? `translateZ(40px) translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)` : 'translateZ(40px)';
     }
 
     document.body.onmousemove = (e) => {
-        apply3DEffect(e);
-        magneticButtons.forEach(btn => applyMagneticEffect(e, btn));
+        window.requestAnimationFrame(() => {
+            document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
+            document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
+            apply3DEffect(e);
+            magneticButtons.forEach(btn => applyMagneticEffect(e, btn));
+        });
     };
 
-    function dataMoshing(textContainer, newText, onComplete) {
-        const chars = '█▓▒░ABCDEFGHIJKLM_NOPQRSTUVWXYZ!@#$%^&*()';
+    function dataMoshing(textContainer, onComplete) {
+        const chars = '█▓▒░01';
         const segments = textContainer.querySelectorAll('span.char, br, span.cursor');
         let completed = 0;
         let charSegments = Array.from(segments).filter(s => s.tagName !== 'BR' && !s.classList.contains('cursor'));
-        const total = charSegments.length;
-
-        if (total === 0) {
-             if (onComplete) onComplete();
-             return;
-        }
-
+        if (charSegments.length === 0) { if (onComplete) onComplete(); return; }
         charSegments.forEach((span, i) => {
             const originalChar = span.textContent;
             let randomCharCount = 0;
@@ -137,32 +107,26 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
                 } else {
                     span.textContent = originalChar;
                     span.style.opacity = '0';
-                    if (++completed >= total && onComplete) {
-                        onComplete();
-                    }
+                    if (++completed >= charSegments.length && onComplete) onComplete();
                 }
             };
-            setTimeout(animate, i * 10);
+            setTimeout(animate, i * 5);
         });
     }
 
-
     function typewriter(textContainer, text, onComplete) {
         let html = '';
-        for (const char of text) {
-            html += char === '\n' ? '<br>' : `<span class="char">${char}</span>`;
-        }
+        for (const char of text) html += char === '\n' ? '<br>' : `<span class="char">${char}</span>`;
         textContainer.innerHTML = html + '<span class="cursor"> |</span>';
-        const chars = textContainer.querySelectorAll('.char');
+        const chars = Array.from(textContainer.children).filter(c => c.tagName === 'SPAN' && !c.classList.contains('cursor'));
         let i = 0;
         function revealChar() {
             if (i < chars.length) {
+                chars[i].style.transition = 'opacity 0.5s';
                 chars[i].style.opacity = '1';
                 i++;
                 setTimeout(revealChar, 15);
-            } else {
-                if (onComplete) onComplete();
-            }
+            } else { if (onComplete) onComplete(); }
         }
         revealChar();
     }
@@ -170,44 +134,64 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     function switchPage(pageOut, pageIn, textIn) {
         infoBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
         const textContainerOut = pageOut.querySelector('.typing-text-container');
-        dataMoshing(textContainerOut, textIn, () => {
-             pageOut.style.display = 'none';
-             pageOut.classList.remove('active');
-             pageIn.style.display = 'flex';
-             pageIn.classList.add('active');
-             const textContainerIn = pageIn.querySelector('.typing-text-container');
-             typewriter(textContainerIn, textIn);
+        dataMoshing(textContainerOut, () => {
+            pageOut.style.display = 'none';
+            pageOut.classList.remove('active');
+            pageIn.style.display = 'flex';
+            pageIn.classList.add('active');
+            const textContainerIn = pageIn.querySelector('.typing-text-container');
+            typewriter(textContainerIn, textIn);
         });
     }
 
     window.addEventListener('load', () => {
         document.body.classList.add('loaded');
         mainContent.classList.add('active');
-        const textContainer = document.getElementById('main-p');
-        typewriter(textContainer, mainText);
+        typewriter(document.getElementById('main-p'), mainText);
     });
     
     document.body.onmouseleave = () => {
         if(parallaxEnabled) {
-             infoBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
-             magneticButtons.forEach(btn => btn.style.transform = 'translateZ(40px)');
+            infoBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            magneticButtons.forEach(btn => btn.style.transform = 'translateZ(40px)');
         }
     };
     
+    document.addEventListener('mousedown', (e) => {
+        if(e.target.closest('.info-box')) return;
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple', 'background-ripple');
+        document.body.appendChild(ripple);
+        const size = 100;
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - size/2}px`;
+        ripple.style.top = `${e.clientY - size/2}px`;
+        setTimeout(() => ripple.remove(), 600);
+    });
+
+    document.querySelectorAll('.btn, .copy-btn').forEach(button => {
+        button.addEventListener('mousedown', function (e) {
+            const rect = this.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+            ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+
     toDonateBtn.onclick = () => switchPage(mainContent, donateContent, donateText);
     toMainBtn.onclick = () => switchPage(donateContent, mainContent, mainText);
 
-    const copyButton = document.getElementById('copyButton');
-    const cardNumberText = document.getElementById('cardNumber')?.innerText;
-    if (copyButton && cardNumberText) {
-        copyButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            navigator.clipboard.writeText(cardNumberText.replace(/\s/g, '')).then(() => {
-                copyButton.classList.add('copied');
-                setTimeout(() => {
-                    copyButton.classList.remove('copied');
-                }, 2000);
-            });
+    document.getElementById('copyButton').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const cardNumber = document.getElementById('cardNumber')?.innerText;
+        navigator.clipboard.writeText(cardNumber.replace(/\s/g, '')).then(() => {
+            e.target.classList.add('copied');
+            setTimeout(() => e.target.classList.remove('copied'), 2000);
         });
-    }
+    });
 });
