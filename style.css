@@ -82,10 +82,8 @@ h1.glow-text {
     opacity: 0;
 }
 span.cursor {
-    display: inline-block;
-    background-color: var(--primary-color);
-    width: 10px;
-    margin-left: 2px;
+    color: var(--primary-color);
+    font-weight: 700;
     animation: blink-caret 1s step-end infinite;
 }
 .btn-container {
@@ -239,9 +237,9 @@ h1 {
 @keyframes blink-caret {
     from,
     to {
-        background-color: transparent
+        color: transparent
     }
     50% {
-        background-color: var(--primary-color);
+        color: var(--primary-color);
     }
 }
