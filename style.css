@@ -82,6 +82,9 @@ body.dragging .drag-handle {
     white-space: pre-wrap;
     transform: translateZ(30px);
 }
+.typing-text-container span.char {
+    opacity: 0;
+}
 #main-content .typing-text-container { min-height: 275px; }
 #donate-content .typing-text-container { min-height: 70px; margin-bottom: 20px;}
 span.cursor {
