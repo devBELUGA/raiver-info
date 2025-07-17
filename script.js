@@ -1,11 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-    const particlesContainer = document.getElementById('particles-js');
     const mainContent = document.getElementById('main-content');
     const donateContent = document.getElementById('donate-content');
     const toDonateBtn = document.getElementById('to-donate-btn');
     const toMainBtn = document.getElementById('to-main-btn');
-
     const mainText = `Здравствуйте, я обычный человек с псевдонимом Рэйвар
 Имя: Еблан
 Псевдоним: Рэйвар
@@ -16,22 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
 Python, JavaScript, Java, C++, C#, Assembler, C, Go
 На этом все! :3
 #krd ❤️`;
-
     const donateText = `хэй! если ты хочешь поддержать меня (например помочь в создании телеграмм-ботов) то можешь кинуть денюжек на карту? :3`;
 
-    function typewriter(element, text, callback) {
-        element.innerHTML = '';
-        element.classList.remove('finished');
+    function typewriter(textContainer, text, callback) {
+        textContainer.innerHTML = '<span class="content"></span><span class="cursor">▋</span>';
+        const contentSpan = textContainer.querySelector('.content');
         let i = 0;
         const speed = 20;
 
         function type() {
             if (i < text.length) {
-                element.innerHTML += text.charAt(i);
+                contentSpan.textContent += text.charAt(i);
                 i++;
                 setTimeout(type, speed);
             } else {
-                element.classList.add('finished');
                 if (callback) callback();
             }
         }
@@ -42,7 +37,6 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         pageElement.style.display = 'flex';
         pageElement.classList.remove('content-out');
         pageElement.classList.add('content-in');
-
         buttonsContainer.classList.remove('visible');
         typewriter(textElement, text, () => {
             buttonsContainer.classList.add('visible');
@@ -50,64 +44,22 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
     }
 
     function switchPage(pageOut, pageIn, textElementIn, textIn, buttonsIn) {
+        pageOut.classList.remove('content-in');
         pageOut.classList.add('content-out');
-
-        setTimeout(() => {
+        pageOut.addEventListener('animationend', () => {
             pageOut.style.display = 'none';
             pageOut.classList.remove('content-out');
-
             showPage(pageIn, textElementIn, textIn, buttonsIn);
-
-        }, 400);
+        }, { once: true });
     }
 
     particlesJS("particles-js", {
-        particles: {
-            number: {
-                value: 60,
-                density: {
-                    enable: true,
-                    value_area: 800
-                }
-            },
-            color: {
-                value: "#ffffff"
-            },
-            shape: {
-                type: "circle"
-            },
-            opacity: {
-                value: 0.5,
-                random: true
-            },
-            size: {
-                value: 3,
-                random: true
-            },
-            line_linked: {
-                enable: false
-            },
-            move: {
-                enable: true,
-                speed: 2,
-                direction: "bottom-right",
-                random: true,
-                straight: true,
-                out_mode: "out"
-            }
+        particles: { number: { value: 50, density: { enable: true, value_area: 800 } },
+            color: { value: "#4f5661" }, shape: { type: "circle" }, opacity: { value: 0.5, random: true },
+            size: { value: 2, random: true }, line_linked: { enable: false },
+            move: { enable: true, speed: 2, direction: "bottom-right", random: false, straight: true, out_mode: "out" }
         },
-        interactivity: {
-            detect_on: "canvas",
-            events: {
-                onhover: {
-                    enable: false
-                },
-                onclick: {
-                    enable: false
-                },
-                resize: true
-            }
-        },
+        interactivity: { detect_on: "canvas", events: { onhover: { enable: false }, onclick: { enable: false }, resize: true } },
         retina_detect: true
     });
 
@@ -115,12 +67,11 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         document.body.classList.add('loaded');
         showPage(mainContent, document.getElementById('main-p'), mainText, document.getElementById('main-btns'));
     });
-
     toDonateBtn.addEventListener('click', () => switchPage(mainContent, donateContent, document.getElementById('donate-p'), donateText, document.getElementById('donate-btns')));
     toMainBtn.addEventListener('click', () => switchPage(donateContent, mainContent, document.getElementById('main-p'), mainText, document.getElementById('main-btns')));
 
     document.querySelectorAll('.btn, .copy-btn').forEach(button => {
-        button.addEventListener('mousedown', function(e) {
+        button.addEventListener('mousedown', function (e) {
             const rect = this.getBoundingClientRect();
             const size = Math.max(this.clientWidth, this.clientHeight);
             const x = e.clientX - rect.left - size / 2;
@@ -131,9 +82,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
             ripple.style.left = `${x}px`;
             ripple.style.top = `${y}px`;
             this.appendChild(ripple);
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
+            setTimeout(() => { ripple.remove(); }, 600);
         });
     });
 
@@ -144,9 +93,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
             e.stopPropagation();
             navigator.clipboard.writeText(cardNumberText.replace(/\s/g, '')).then(() => {
                 copyButton.classList.add('copied');
-                setTimeout(() => {
-                    copyButton.classList.remove('copied');
-                }, 2000);
+                setTimeout(() => { copyButton.classList.remove('copied'); }, 2000);
             });
         });
     }
