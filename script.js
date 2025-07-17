@@ -21,15 +21,20 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
 #krd ❤️`;
     const donateText = `хэй! если ты хочешь поддержать меня (например помочь в создании телеграмм-ботов) то можешь кинуть денюжек на карту? :3`;
 
-    let isDragging = false, parallaxEnabled = true, xOffset = 0, yOffset = 0, initialX, initialY;
+    let isDragging = false;
+    let parallaxEnabled = true;
+    let xOffset = 0;
+    let yOffset = 0;
+    let initialX;
+    let initialY;
 
     dragHandles.forEach(handle => {
-        handle.addEventListener('mousedown', dragStart);
+        handle.addEventListener('mousedown', dragStart, false);
         handle.addEventListener('touchstart', dragStart, { passive: false });
     });
-    document.addEventListener('mouseup', dragEnd);
-    document.addEventListener('touchend', dragEnd);
-    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', dragEnd, false);
+    document.addEventListener('touchend', dragEnd, false);
+    document.addEventListener('mousemove', drag, false);
     document.addEventListener('touchmove', drag, { passive: false });
     
     function dragStart(e) {
@@ -37,9 +42,14 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         parallaxEnabled = false;
         document.body.classList.add('dragging');
         infoBox.style.transition = 'none';
-        const rect = dragContainer.getBoundingClientRect();
-        initialX = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - rect.left;
-        initialY = (e.type === 'touchstart' ? e.touches[0].clientY : e.clientY) - rect.top;
+
+        if (e.type === 'touchstart') {
+            initialX = e.touches[0].clientX - xOffset;
+            initialY = e.touches[0].clientY - yOffset;
+        } else {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+        }
     }
     
     function dragEnd() {
@@ -48,20 +58,33 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
         parallaxEnabled = true;
         infoBox.style.transition = 'transform 0.05s linear';
         document.body.classList.remove('dragging');
+        initialX = xOffset;
+        initialY = yOffset;
     }
     
     function drag(e) {
         if (isDragging) {
             e.preventDefault();
-            const currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
-            const currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
+            let currentX, currentY;
+
+            if (e.type === "touchmove") {
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+            } else {
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+            }
+            
+            xOffset = currentX;
+            yOffset = currentY;
+
             dragContainer.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
         }
     }
 
     function apply3DEffect(e) {
         if (!parallaxEnabled) return;
-        const rect = dragContainer.getBoundingClientRect();
+        const rect = infoBox.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         const mouseX = e.clientX - centerX;
@@ -89,7 +112,7 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
             document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
             document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
             apply3DEffect(e);
-            magneticButtons.forEach(btn => applyMagneticEffect(e, btn));
+            document.querySelectorAll('.btn.magnetic').forEach(btn => applyMagneticEffect(e, btn));
         });
     };
 
