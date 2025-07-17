@@ -1,8 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const infoBox = document.querySelector('.info-box');
+    const magneticButtons = document.querySelectorAll('.magnetic');
+
     const mainContent = document.getElementById('main-content');
     const donateContent = document.getElementById('donate-content');
     const toDonateBtn = document.getElementById('to-donate-btn');
     const toMainBtn = document.getElementById('to-main-btn');
+
     const mainText = `Здравствуйте, я обычный человек с псевдонимом Рэйвар
 Имя: Еблан
 Псевдоним: Рэйвар
@@ -15,86 +19,133 @@ Python, JavaScript, Java, C++, C#, Assembler, C, Go
 #krd ❤️`;
     const donateText = `хэй! если ты хочешь поддержать меня (например помочь в создании телеграмм-ботов) то можешь кинуть денюжек на карту? :3`;
 
-    function typewriter(textContainer, text, callback) {
-        textContainer.innerHTML = '<span class="content"></span><span class="cursor">▋</span>';
-        const contentSpan = textContainer.querySelector('.content');
-        let i = 0;
-        const speed = 20;
+    let currentRAF = null;
 
-        function type() {
-            if (i < text.length) {
-                contentSpan.textContent += text.charAt(i);
-                i++;
-                setTimeout(type, speed);
-            } else {
-                if (callback) callback();
-            }
-        }
-        type();
+    function apply3DEffect(e) {
+        const {
+            left,
+            top,
+            width,
+            height
+        } = infoBox.getBoundingClientRect();
+        const centerX = left + width / 2;
+        const centerY = top + height / 2;
+        const mouseX = e.clientX - centerX;
+        const mouseY = e.clientY - centerY;
+        const rotateX = (mouseY / (height / 2)) * -6;
+        const rotateY = (mouseX / (width / 2)) * 6;
+        infoBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     }
 
-    function showPage(pageElement, textElement, text, buttonsContainer) {
-        pageElement.style.display = 'flex';
-        pageElement.classList.remove('content-out');
-        pageElement.classList.add('content-in');
-        buttonsContainer.classList.remove('visible');
-        typewriter(textElement, text, () => {
-            buttonsContainer.classList.add('visible');
+    function applyMagneticEffect(e, el) {
+        const { left, top, width, height } = el.getBoundingClientRect();
+        const centerX = left + width / 2;
+        const centerY = top + height / 2;
+        const deltaX = Math.floor(e.clientX - centerX);
+        const deltaY = Math.floor(e.clientY - centerY);
+        const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+        
+        if (distance < 100) {
+            el.style.transform = `translateZ(40px) translate(${deltaX * 0.2}px, ${deltaY * 0.2}px)`;
+        } else {
+            el.style.transform = 'translateZ(40px)';
+        }
+    }
+    
+    function animate() {
+        if(currentRAF) {
+           document.body.onmousemove = (e) => {
+               apply3DEffect(e);
+               magneticButtons.forEach(btn => applyMagneticEffect(e, btn));
+           };
+        }
+       requestAnimationFrame(animate);
+    }
+    
+    function dataMoshing(textContainer, newText, onComplete) {
+        const chars = '█▓▒░ABCDEFGHIJKLM_NOPQRSTUVWXYZ!@#$%^&*()';
+        const segments = textContainer.querySelectorAll('span.char, span.cursor');
+        let completed = 0;
+        const total = segments.length - 1;
+
+        segments.forEach((span, i) => {
+            if(span.classList.contains('cursor')) return;
+            const originalChar = span.textContent;
+            let randomCharCount = 0;
+            
+            const animate = () => {
+                if (randomCharCount < 10) {
+                    span.textContent = chars[Math.floor(Math.random() * chars.length)];
+                    span.style.opacity = Math.random();
+                    randomCharCount++;
+                    setTimeout(animate, 20);
+                } else {
+                    span.textContent = originalChar;
+                    span.style.opacity = '0';
+                     if (++completed >= total && onComplete) {
+                        onComplete();
+                     }
+                }
+            };
+            setTimeout(animate, i * 10);
         });
     }
 
-    function switchPage(pageOut, pageIn, textElementIn, textIn, buttonsIn) {
-        pageOut.classList.remove('content-in');
-        pageOut.classList.add('content-out');
-        pageOut.addEventListener('animationend', () => {
-            pageOut.style.display = 'none';
-            pageOut.classList.remove('content-out');
-            showPage(pageIn, textElementIn, textIn, buttonsIn);
-        }, { once: true });
-    }
 
-    particlesJS("particles-js", {
-        particles: { number: { value: 50, density: { enable: true, value_area: 800 } },
-            color: { value: "#4f5661" }, shape: { type: "circle" }, opacity: { value: 0.5, random: true },
-            size: { value: 2, random: true }, line_linked: { enable: false },
-            move: { enable: true, speed: 2, direction: "bottom-right", random: false, straight: true, out_mode: "out" }
-        },
-        interactivity: { detect_on: "canvas", events: { onhover: { enable: false }, onclick: { enable: false }, resize: true } },
-        retina_detect: true
-    });
+    function typewriter(textContainer, text, onComplete) {
+        let textWithSpans = '';
+        for (const char of text) {
+            textWithSpans += `<span class="char">${char}</span>`;
+        }
+        textContainer.innerHTML = textWithSpans + '<span class="cursor">▋</span>';
+
+        const chars = textContainer.querySelectorAll('.char');
+        let i = 0;
+
+        function revealChar() {
+            if (i < chars.length) {
+                chars[i].style.opacity = '1';
+                i++;
+                setTimeout(revealChar, 15);
+            } else {
+                if (onComplete) onComplete();
+            }
+        }
+        revealChar();
+    }
+    
+    function switchPage(pageOut, pageIn, textIn) {
+        currentRAF = false;
+        infoBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        const textContainerOut = pageOut.querySelector('.typing-text-container');
+        
+        dataMoshing(textContainerOut, textIn, () => {
+             pageOut.style.display = 'none';
+             pageOut.classList.remove('active');
+
+             pageIn.style.display = 'flex';
+             pageIn.classList.add('active');
+             
+             const textContainerIn = pageIn.querySelector('.typing-text-container');
+             typewriter(textContainerIn, textIn);
+             currentRAF = true;
+        });
+    }
 
     window.addEventListener('load', () => {
         document.body.classList.add('loaded');
-        showPage(mainContent, document.getElementById('main-p'), mainText, document.getElementById('main-btns'));
+        mainContent.classList.add('active');
+        const textContainer = document.getElementById('main-p');
+        typewriter(textContainer, mainText);
+        currentRAF = true;
+        animate();
     });
-    toDonateBtn.addEventListener('click', () => switchPage(mainContent, donateContent, document.getElementById('donate-p'), donateText, document.getElementById('donate-btns')));
-    toMainBtn.addEventListener('click', () => switchPage(donateContent, mainContent, document.getElementById('main-p'), mainText, document.getElementById('main-btns')));
-
-    document.querySelectorAll('.btn, .copy-btn').forEach(button => {
-        button.addEventListener('mousedown', function (e) {
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(this.clientWidth, this.clientHeight);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-            ripple.style.width = ripple.style.height = `${size}px`;
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
-            this.appendChild(ripple);
-            setTimeout(() => { ripple.remove(); }, 600);
-        });
-    });
-
-    const copyButton = document.getElementById('copyButton');
-    const cardNumberText = document.getElementById('cardNumber')?.innerText;
-    if (copyButton && cardNumberText) {
-        copyButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            navigator.clipboard.writeText(cardNumberText.replace(/\s/g, '')).then(() => {
-                copyButton.classList.add('copied');
-                setTimeout(() => { copyButton.classList.remove('copied'); }, 2000);
-            });
-        });
-    }
+    
+    document.body.onmouseleave = () => {
+      infoBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
+      magneticButtons.forEach(btn => btn.style.transform = 'translateZ(40px)');
+    };
+    
+    toDonateBtn.onclick = () => switchPage(mainContent, donateContent, donateText);
+    toMainBtn.onclick = () => switchPage(donateContent, mainContent, mainText);
 });
