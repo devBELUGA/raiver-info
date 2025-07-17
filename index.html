@@ -13,8 +13,9 @@
     <div id="particles-js"></div>
 
     <div class="info-box">
-        <h1>Информация о Рэйваре</h1>
-        <p>Здравствуйте, я обычный человек с псевдонимом Рэйвар
+        <div id="main-content" class="content-wrapper">
+            <h1>Информация о Рэйваре</h1>
+            <p>Здравствуйте, я обычный человек с псевдонимом Рэйвар
 Имя: Еблан
 Псевдоним: Рэйвар
 Возраст: 1488
@@ -24,10 +25,23 @@
 Python, JavaScript, Java, C++, C#, Assembler, C, Go
 На этом все! :3
 #krd ❤️</p>
-        <div class="btn-container">
-            <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn">Телеграмм</a>
-            <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn">Совместный канал</a>
-            <a href="donate.html" class="btn btn-special">Донат</a>
+            <div class="btn-container">
+                <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn">Телеграмм</a>
+                <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn">Совместный канал</a>
+                <button id="to-donate-btn" class="btn btn-special">Донат</button>
+            </div>
+        </div>
+        
+        <div id="donate-content" class="content-wrapper" style="display: none;">
+             <p>хэй! если ты хочешь поддержать меня (например помочь в создании телеграмм-ботов) то можешь кинуть денюжек на карту? :3</p>
+            <div class="card-number-container">
+                <span class="card-label">CARD_NUMBER:</span>
+                <code id="cardNumber">2200 7013 3309 6383</code>
+                <button id="copyButton" class="copy-btn" title="Копировать"></button>
+            </div>
+            <div class="btn-container">
+                <button id="to-main-btn" class="btn">Назад</button>
+            </div>
         </div>
     </div>
     
