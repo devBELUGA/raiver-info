@@ -11,12 +11,18 @@
 </head>
 <body>
     <div class="grid-background"></div>
-
     <div id="drag-container" class="perspective-container">
         <div class="info-box">
             <div id="main-content" class="content-wrapper">
-                <h1 class="glow-text drag-handle">Информация о Рэйваре</h1>
-                <p id="main-p" class="typing-text-container"></p>
+                 <div class="terminal-window">
+                    <div class="terminal-header drag-handle">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <div class="title">Информация о Рэйваре</div>
+                    </div>
+                    <div class="terminal-body">
+                         <p id="main-p" class="typing-text-container"></p>
+                    </div>
+                </div>
                 <div id="main-btns" class="btn-container">
                     <a href="https://t.me/slolslols" target="_blank" rel="noopener noreferrer" class="btn magnetic">Телеграмм</a>
                     <a href="https://t.me/krd_ch" target="_blank" rel="noopener noreferrer" class="btn magnetic">Совместный канал</a>
@@ -25,7 +31,10 @@
             </div>
             <div id="donate-content" class="content-wrapper" style="display: none;">
                  <div class="terminal-window">
-                    <div class="terminal-header drag-handle"><span></span><span></span><span></span></div>
+                    <div class="terminal-header drag-handle">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <div class="title">Поддержка</div>
+                    </div>
                     <div class="terminal-body">
                         <p id="donate-p" class="typing-text-container"></p>
                         <div class="card-number-container">
